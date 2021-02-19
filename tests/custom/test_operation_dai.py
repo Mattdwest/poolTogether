@@ -118,7 +118,7 @@ def test_operation(pm, chain):
     strategy.harvest({"from": gov})
 
     assert ticket.balanceOf(strategy) > 0
-    chain.sleep(3600*24*7*10)
+    chain.sleep(3600*24*7)
     chain.mine(1)
     a = yDAI.pricePerShare()
 
@@ -150,6 +150,8 @@ def test_operation(pm, chain):
     b = yDAI.pricePerShare()
 
     assert b > a
+
+
 
     #withdrawals have a slippage protection parameter, defaults to 1 = 0.01%.
     #overwriting here to be 0.75%, to account for slippage + 0.5% v1 vault withdrawal fee.

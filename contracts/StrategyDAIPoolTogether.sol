@@ -63,7 +63,7 @@ contract StrategyDAIPoolTogether is BaseStrategy {
     function protectedTokens() internal override view returns (address[] memory) {
         address[] memory protected = new address[](3);
         // (aka want) is already protected by default
-        protected[0] = wantPool;
+        protected[0] = ticket;
         protected[1] = poolToken;
         protected[2] = bonus;
         return protected;
@@ -87,10 +87,6 @@ contract StrategyDAIPoolTogether is BaseStrategy {
            _debtPayment = Math.min(_amountFreed, _debtOutstanding);
         }
 
-        //start by setting profit and loss to zero - will be changed later as needed
-        _profit == 0;
-        _loss == 0;
-
         // harvest() will track profit by estimated total assets compared to debt.
         uint256 balanceOfWantBefore = balanceOfWant();
         uint256 debt = vault.strategies(address(this)).totalDebt;
@@ -100,8 +96,7 @@ contract StrategyDAIPoolTogether is BaseStrategy {
 
         if (currentValue > debt) {
             uint256 _amount = currentValue.sub(debt);
-            (uint256 _liquidatedAmount,) = liquidatePosition(_amount);
-            //_profit = _liquidatedAmount;
+            liquidatePosition(_amount);
         }
 
         claimReward();
@@ -171,7 +166,7 @@ contract StrategyDAIPoolTogether is BaseStrategy {
     function _withdrawSome(uint256 _amount) internal returns (uint256) {
         uint256 balanceOfWantBefore = balanceOfWant();
 
-        IPoolTogether(wantPool).withdrawInstantlyFrom(address(this), _amount, address(wantPool), 0);
+        IPoolTogether(wantPool).withdrawInstantlyFrom(address(this), _amount, address(ticket), 0);
         uint256 balanceAfter = balanceOfWant();
         return balanceAfter.sub(balanceOfWantBefore);
     }
@@ -213,7 +208,7 @@ contract StrategyDAIPoolTogether is BaseStrategy {
     }
 
     // swaps rewarded tokens for want
-    function _swap(uint256 _amountIn, address _token) internal returns (uint256[] memory amounts) {
+    function _swap(uint256 _amountIn, address _token) public returns (uint256[] memory amounts) {
         address[] memory path = new address[](3);
         path[0] = address(_token); // token to swap
         path[1] = address(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2); // weth
