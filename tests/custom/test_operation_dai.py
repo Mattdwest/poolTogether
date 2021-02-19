@@ -77,7 +77,7 @@ def test_operation(pm, chain):
     strategy.setStrategist(strategist)
 
     yDAI.addStrategy(
-        strategy, 10_000, 0, 0, {"from": gov}
+        strategy, 10_000, 0,2**256-1, 0, {"from": gov}
     )
 
     dai.approve(gov, Wei("1000000 ether"), {"from": gov})
