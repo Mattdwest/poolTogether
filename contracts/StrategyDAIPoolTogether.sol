@@ -28,15 +28,10 @@ contract StrategyDAIPoolTogether is BaseStrategy {
     address public bonus;
     address public faucet;
     address public ticket;
-    address public gov;
     string public constant override name = "StrategyDAIPoolTogether";
 
-    // adding protection against slippage attacks
-    //uint constant public DENOMINATOR = 10000;
-    //uint public slip = 100;
-
     constructor(
-        address _vault, // vault is v2, address is 0xBFa4D8AA6d8a379aBFe7793399D3DdaCC5bBECBB
+        address _vault,
         address _dai,
         address _wantPool,
         address _poolToken,
@@ -72,13 +67,9 @@ contract StrategyDAIPoolTogether is BaseStrategy {
 
     // returns sum of all assets, realized and unrealized
     function estimatedTotalAssets() public override view returns (uint256) {
-        //uint256 _bonusAmount = IERC20(bonus).balanceOf(address(this));
-        //uint256 reward = futureReward();
-        //uint256 poolProfit = futureProfit(reward, poolToken);
-        return balanceOfWant().add(balanceOfPool()); // .add(poolProfit)
+        return balanceOfWant().add(balanceOfPool());
     }
 
-    //todo: this
     function prepareReturn(uint256 _debtOutstanding) internal override returns (uint256 _profit, uint256 _loss, uint256 _debtPayment) {
        // We might need to return want to the vault
         if (_debtOutstanding > 0) {
@@ -100,10 +91,6 @@ contract StrategyDAIPoolTogether is BaseStrategy {
         }
 
         claimReward();
-
-        //uint256 _gains = futureReward();
-        //if(_gains > 0) {
-        //}
 
         uint256 _tokensAvailable = IERC20(poolToken).balanceOf(address(this));
         if(_tokensAvailable > 0) {
@@ -166,7 +153,7 @@ contract StrategyDAIPoolTogether is BaseStrategy {
     function _withdrawSome(uint256 _amount) internal returns (uint256) {
         uint256 balanceOfWantBefore = balanceOfWant();
 
-        IPoolTogether(wantPool).withdrawInstantlyFrom(address(this), _amount, address(ticket), 0);
+        IPoolTogether(wantPool).withdrawInstantlyFrom(address(this), _amount, address(ticket), 1e20);
         uint256 balanceAfter = balanceOfWant();
         return balanceAfter.sub(balanceOfWantBefore);
     }
@@ -191,24 +178,8 @@ contract StrategyDAIPoolTogether is BaseStrategy {
         return want.balanceOf(address(this));
     }
 
-    // calculates value of reward tokens into want
-    function futureProfit(uint256 _amount, address _token) public view returns (uint256) {
-        if (_amount == 0) {
-            return 0;
-        }
-
-        address[] memory path = new address[](3);
-        path[0] = address(_token); // token to convert
-        path[1] = address(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2); // weth
-        path[2] = address(want);
-        uint256[] memory amounts = Uni(unirouter).getAmountsOut(_amount, path);
-
-        return amounts[amounts.length - 1];
-
-    }
-
     // swaps rewarded tokens for want
-    function _swap(uint256 _amountIn, address _token) public returns (uint256[] memory amounts) {
+    function _swap(uint256 _amountIn, address _token) internal returns (uint256[] memory amounts) {
         address[] memory path = new address[](3);
         path[0] = address(_token); // token to swap
         path[1] = address(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2); // weth
@@ -218,7 +189,7 @@ contract StrategyDAIPoolTogether is BaseStrategy {
     }
 
     // claims POOL from faucet
-    function claimReward() public returns (uint256) {
+    function claimReward() internal returns (uint256) {
         uint256 poolBefore = IERC20(poolToken).balanceOf(address(this));
         IPoolFaucet(faucet).claim(address(this));
         uint256 poolAfter = IERC20(poolToken).balanceOf(address(this));
@@ -231,18 +202,5 @@ contract StrategyDAIPoolTogether is BaseStrategy {
     function setReferrer(address newReferral) external onlyGovernance {
         refer = address(newReferral);
     }
-
-
-    // This function doesn't appear to work or make sense. Ignoring lookahead and just claiming in the dark.
-    //function futureReward() internal view returns (uint256) {
-    //    uint256 lastExchangeRateMantissa;
-    //    uint256 balance;
-    //    IPoolFaucet(faucet).userStates(address(this));
-    //    return balance;
-    //}
-
-    ///function _sweepSwap(uint256 _amountIn, address _token) external onlyKeepers returns (uint256) {
-    ///}
-
 }
 

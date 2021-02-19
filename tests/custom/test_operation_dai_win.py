@@ -100,18 +100,10 @@ def test_operation(pm, chain):
     ticket.approve(uni, Wei("1000000 ether"), {"from": gov})
     ticket.approve(gov, Wei("1000000 ether"), {"from": gov})
 
-    # depositing DAI to generate crv3 tokens.
-    #crv3.approve(crv3_liquidity, Wei("1000000 ether"), {"from": crv3_liquidity})
-    #threePool.add_liquidity([Wei("200000 ether"), 0, 0], 0, {"from": gov})
-    #giving Gov some shares to mimic profit
-    #yCRV3.depositAll({"from": gov})
-
     # users deposit to vault
     yDAI.deposit(Wei("1000 ether"), {"from": bob})
     yDAI.deposit(Wei("4000 ether"), {"from": alice})
     yDAI.deposit(Wei("10 ether"), {"from": tinytim})
-
-    #a = yDAI.pricePerShare()
 
     chain.mine(1)
 
@@ -142,28 +134,23 @@ def test_operation(pm, chain):
     chain.sleep(2400*6)
     chain.mine(1)
 
-    c = yDAI.balanceOf(alice)
+    #now we deal with winning a drawing. Both bonus and extra tickets.
+    #basically just airdrop both, that's how winning works anyways
+    ticket.transferFrom(gov, strategy, Wei("1000 ether"), {"from": gov})
+    bonus.transferFrom(gov, strategy, Wei("10 ether"), {"from": gov})
 
-    yDAI.withdraw(c, alice, 75, {"from": alice})
+    strategy.harvest({"from": gov})
+    chain.mine(1)
 
-    assert dai.balanceOf(alice) > 0
-    assert dai.balanceOf(bob) == 0
-    assert ticket.balanceOf(strategy) > 0
+    # 6 hours for pricepershare to go up
+    chain.sleep(2400 * 6)
+    chain.mine(1)
 
-    d = yDAI.balanceOf(bob)
-    yDAI.withdraw(d, bob, 75, {"from": bob})
+    c = yDAI.pricePerShare()
 
-    assert dai.balanceOf(bob) > 0
-    assert dai.balanceOf(strategy) == 0
-
-    e = yDAI.balanceOf(tinytim)
-    yDAI.withdraw(e, tinytim, 75, {"from": tinytim})
-
-    assert dai.balanceOf(tinytim) > 0
-    assert dai.balanceOf(strategy) == 0
-
-    # We should have made profit
-    assert yDAI.pricePerShare() > 1e18
+    assert c > b
+    d = dai.balanceOf(yDAI)
+    assert d > 0
 
     pass
 

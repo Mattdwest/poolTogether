@@ -131,50 +131,13 @@ def test_operation(pm, chain):
     chain.sleep(2400*6)
     chain.mine(1)
 
-    b = yDAI.pricePerShare()
 
-    assert b > a
+    newstrategy = guardian.deploy(StrategyDAIPoolTogether, yDAI, dai, wantPool, poolToken, uni, bonus, faucet, ticket)
+    newstrategy.setStrategist(strategist)
 
-    strategy.harvest({"from": gov})
-    chain.mine(1)
+    yDAI.migrateStrategy(strategy, newstrategy, {"from": gov})
 
-    # 6 hours for pricepershare to go up
-    chain.sleep(2400*6)
-    chain.mine(1)
-
-    c = yDAI.balanceOf(alice)
-
-    yDAI.withdraw(c, alice, 75, {"from": alice})
-
-    assert dai.balanceOf(alice) > 0
-    assert dai.balanceOf(bob) == 0
-    assert ticket.balanceOf(strategy) > 0
-
-    d = yDAI.balanceOf(bob)
-    yDAI.withdraw(d, bob, 75, {"from": bob})
-
-    assert dai.balanceOf(bob) > 0
-    assert dai.balanceOf(strategy) == 0
-
-    e = yDAI.balanceOf(tinytim)
-    yDAI.withdraw(e, tinytim, 75, {"from": tinytim})
-
-    assert dai.balanceOf(tinytim) > 0
-    assert dai.balanceOf(strategy) == 0
-
-    # We should have made profit
-    assert yDAI.pricePerShare() > 1e18
+    assert ticket.balanceOf(strategy) == 0
+    assert ticket.balanceOf(newstrategy) > 0
 
     pass
-
-    ##crv3.transferFrom(gov, bob, Wei("100000 ether"), {"from": gov})
-    ##crv3.transferFrom(gov, alice, Wei("788000 ether"), {"from": gov})
-
-    # yUSDT.deposit(Wei("100000 ether"), {"from": bob})
-    # yUSDT.deposit(Wei("788000 ether"), {"from": alice})
-
-    # strategy.harvest()
-
-    # assert dai.balanceOf(strategy) == 0
-    # assert yUSDT3.balanceOf(strategy) > 0
-    # assert ycrv3.balanceOf(strategy) > 0
