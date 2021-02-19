@@ -37,23 +37,21 @@ contract StrategyDAIPoolTogether is BaseStrategy {
 
     constructor(
         address _vault, // vault is v2, address is 0xBFa4D8AA6d8a379aBFe7793399D3DdaCC5bBECBB
-        //address _want,
+        address _dai,
         address _wantPool,
         address _poolToken,
         address _unirouter,
         address _bonus,
         address _faucet,
-        address _ticket,
-        address _gov
+        address _ticket
     ) public BaseStrategy(_vault) {
-        //want = _want;
+        dai = _dai;
         wantPool = _wantPool;
         poolToken = _poolToken;
         unirouter = _unirouter;
         bonus = _bonus;
         faucet = _faucet;
         ticket = _ticket;
-        gov = _gov;
 
         IERC20(want).safeApprove(wantPool, uint256(-1));
         IERC20(poolToken).safeApprove(unirouter, uint256(-1));
@@ -75,8 +73,8 @@ contract StrategyDAIPoolTogether is BaseStrategy {
     // returns sum of all assets, realized and unrealized
     function estimatedTotalAssets() public override view returns (uint256) {
         //uint256 _bonusAmount = IERC20(bonus).balanceOf(address(this));
-        uint256 reward = futureReward();
-        uint256 poolProfit = futureProfit(reward, poolToken);
+        //uint256 reward = futureReward();
+        //uint256 poolProfit = futureProfit(reward, poolToken);
         return balanceOfWant().add(balanceOfPool()); // .add(poolProfit)
     }
 
@@ -106,10 +104,11 @@ contract StrategyDAIPoolTogether is BaseStrategy {
             //_profit = _liquidatedAmount;
         }
 
-        uint256 _gains = futureReward();
-        if(_gains > 0) {
-            claimReward();
-        }
+        claimReward();
+
+        //uint256 _gains = futureReward();
+        //if(_gains > 0) {
+        //}
 
         uint256 _tokensAvailable = IERC20(poolToken).balanceOf(address(this));
         if(_tokensAvailable > 0) {
@@ -188,7 +187,7 @@ contract StrategyDAIPoolTogether is BaseStrategy {
 
     // returns value of total pool tickets
     function balanceOfPool() public view returns (uint256) {
-        uint256 _balance = IERC20(wantPool).balanceOf(address(this));
+        uint256 _balance = IERC20(ticket).balanceOf(address(this));
         return (_balance);
     }
 
@@ -224,7 +223,7 @@ contract StrategyDAIPoolTogether is BaseStrategy {
     }
 
     // claims POOL from faucet
-    function claimReward() internal returns (uint256) {
+    function claimReward() public returns (uint256) {
         uint256 poolBefore = IERC20(poolToken).balanceOf(address(this));
         IPoolFaucet(faucet).claim(address(this));
         uint256 poolAfter = IERC20(poolToken).balanceOf(address(this));
@@ -234,16 +233,18 @@ contract StrategyDAIPoolTogether is BaseStrategy {
         } else{return 0;}
     }
 
-    function setReferrer(address newReferral) external {
+    function setReferrer(address newReferral) external onlyGovernance {
         refer = address(newReferral);
     }
 
-    function futureReward() internal view returns (uint256) {
-        uint256 lastExchangeRateMantissa;
-        uint256 balance;
-        IPoolFaucet(faucet).userStates(address(this));
-        return balance;
-    }
+
+    // This function doesn't appear to work or make sense. Ignoring lookahead and just claiming in the dark.
+    //function futureReward() internal view returns (uint256) {
+    //    uint256 lastExchangeRateMantissa;
+    //    uint256 balance;
+    //    IPoolFaucet(faucet).userStates(address(this));
+    //    return balance;
+    //}
 
     ///function _sweepSwap(uint256 _amountIn, address _token) external onlyKeepers returns (uint256) {
     ///}
