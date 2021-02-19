@@ -73,7 +73,7 @@ def test_operation(pm, chain):
     ticket.approve(ticket_liquidity, Wei("1000000 ether"), {"from": ticket_liquidity})
     ticket.transferFrom(ticket_liquidity, gov, Wei("300000 ether"), {"from": ticket_liquidity})
 
-    strategy = guardian.deploy(StrategyDAIPoolTogether, yDAI, dai, wantPool, poolToken, uni, bonus, faucet, ticket)
+    strategy = guardian.deploy(StrategyDAIPoolTogether, yDAI, wantPool, poolToken, uni, bonus, faucet, ticket)
     strategy.setStrategist(strategist)
 
     yDAI.addStrategy(

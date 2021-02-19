@@ -12,8 +12,10 @@ from brownie import StrategyDAIPoolTogether
 
 @pytest.mark.require_network("mainnet-fork")
 def test_operation(pm, chain):
+    #dai = comp in this test.
+    # note: bonus also is comp. Testing how this interacts.
     dai_liquidity = accounts.at(
-        "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7", force=True
+        "0x7587cAefc8096f5F40ACB83A09Df031a018C66ec", force=True
     )  # using curve pool (lots of dai)
 
     bonus_liquidity = accounts.at(

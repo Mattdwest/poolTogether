@@ -21,7 +21,7 @@ contract StrategyDAIPoolTogether is BaseStrategy {
     using Address for address;
     using SafeMath for uint256;
 
-    address public dai;
+    //address public dai;
     address public wantPool;
     address public poolToken;
     address public unirouter;
@@ -32,7 +32,7 @@ contract StrategyDAIPoolTogether is BaseStrategy {
 
     constructor(
         address _vault,
-        address _dai,
+        //address _dai,
         address _wantPool,
         address _poolToken,
         address _unirouter,
@@ -40,7 +40,7 @@ contract StrategyDAIPoolTogether is BaseStrategy {
         address _faucet,
         address _ticket
     ) public BaseStrategy(_vault) {
-        dai = _dai;
+        //dai = _dai;
         wantPool = _wantPool;
         poolToken = _poolToken;
         unirouter = _unirouter;
