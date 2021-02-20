@@ -207,7 +207,7 @@ contract StrategyDAIPoolTogether is BaseStrategy {
         address[] memory path = new address[](3);
         path[0] = _token; // token to swap
         path[1] = address(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2); // weth
-        path[2] = want;
+        path[2] = address(want);
 
         Uni(unirouter).swapExactTokensForTokens(
             _amountIn,
