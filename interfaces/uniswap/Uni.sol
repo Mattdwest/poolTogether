@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
-
-pragma solidity ^0.6.12;
+pragma solidity 0.6.12;
 
 interface Uni {
     function swapExactETHForTokens(
@@ -10,7 +9,6 @@ interface Uni {
         uint256 deadline
     ) external payable returns (uint256[] memory amounts);
 
-
     function swapExactTokensForTokens(
         uint256,
         uint256,
@@ -19,5 +17,8 @@ interface Uni {
         uint256
     ) external;
 
-    function getAmountsOut(uint256 amountIn, address[] memory path) external view returns (uint256[] memory amounts);
+    function getAmountsOut(uint256 amountIn, address[] memory path)
+        external
+        view
+        returns (uint256[] memory amounts);
 }

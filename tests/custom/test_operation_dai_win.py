@@ -44,46 +44,50 @@ def test_operation(pm, chain):
     yDAI.setDepositLimit(Wei("1000000 ether"))
 
     uni = Contract(
-      "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D", owner=gov
+        "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D", owner=gov
     )  # UNI router v2
 
     wantPool = Contract(
-      "0xEBfb47A7ad0FD6e57323C8A42B2E5A6a4F68fc1a", owner=gov
+        "0xEBfb47A7ad0FD6e57323C8A42B2E5A6a4F68fc1a", owner=gov
     )  # dai pool
 
     poolToken = Contract(
-      "0x0cec1a9154ff802e7934fc916ed7ca50bde6844e", owner=gov
+        "0x0cec1a9154ff802e7934fc916ed7ca50bde6844e", owner=gov
     )  # POOL token
 
     bonus = Contract(
-      "0xc00e94cb662c3520282e6f5717214004a7f26888", owner=gov
+        "0xc00e94cb662c3520282e6f5717214004a7f26888", owner=gov
     )  # comp token
 
     faucet = Contract(
-      "0xF362ce295F2A4eaE4348fFC8cDBCe8d729ccb8Eb", owner=gov
+        "0xF362ce295F2A4eaE4348fFC8cDBCe8d729ccb8Eb", owner=gov
     )  # pool token faucet address
 
     ticket = Contract(
-      "0x334cbb5858417aee161b53ee0d5349ccf54514cf", owner=gov
+        "0x334cbb5858417aee161b53ee0d5349ccf54514cf", owner=gov
     )  # dai pooltogether ticket
 
     bonus.approve(bonus_liquidity, Wei("1000000 ether"), {"from": bonus_liquidity})
-    bonus.transferFrom(bonus_liquidity, gov, Wei("300000 ether"), {"from": bonus_liquidity})
+    bonus.transferFrom(
+        bonus_liquidity, gov, Wei("300000 ether"), {"from": bonus_liquidity}
+    )
 
     ticket.approve(ticket_liquidity, Wei("1000000 ether"), {"from": ticket_liquidity})
-    ticket.transferFrom(ticket_liquidity, gov, Wei("300000 ether"), {"from": ticket_liquidity})
+    ticket.transferFrom(
+        ticket_liquidity, gov, Wei("300000 ether"), {"from": ticket_liquidity}
+    )
 
-    strategy = guardian.deploy(StrategyDAIPoolTogether, yDAI, wantPool, poolToken, uni, bonus, faucet, ticket)
+    strategy = guardian.deploy(
+        StrategyDAIPoolTogether, yDAI, wantPool, poolToken, uni, bonus, faucet, ticket
+    )
     strategy.setStrategist(strategist)
 
-    yDAI.addStrategy(
-        strategy, 10_000, 0,2**256-1, 0, {"from": gov}
-    )
+    yDAI.addStrategy(strategy, 10_000, 0, 2 ** 256 - 1, 0, {"from": gov})
 
     dai.approve(gov, Wei("1000000 ether"), {"from": gov})
     dai.transferFrom(gov, bob, Wei("1000 ether"), {"from": gov})
     dai.transferFrom(gov, alice, Wei("4000 ether"), {"from": gov})
-    dai.transferFrom(gov, tinytim, Wei("10 ether"), {"from":gov})
+    dai.transferFrom(gov, tinytim, Wei("10 ether"), {"from": gov})
     dai.approve(yDAI, Wei("1000000 ether"), {"from": bob})
     dai.approve(yDAI, Wei("1000000 ether"), {"from": alice})
     dai.approve(yDAI, Wei("1000000 ether"), {"from": tinytim})
@@ -110,7 +114,7 @@ def test_operation(pm, chain):
     strategy.harvest({"from": gov})
 
     assert ticket.balanceOf(strategy) > 0
-    chain.sleep(3600*24*7)
+    chain.sleep(3600 * 24 * 7)
     chain.mine(1)
     a = yDAI.pricePerShare()
 
@@ -120,7 +124,7 @@ def test_operation(pm, chain):
     chain.mine(1)
 
     # 6 hours for pricepershare to go up
-    chain.sleep(2400*6)
+    chain.sleep(2400 * 6)
     chain.mine(1)
 
     b = yDAI.pricePerShare()
@@ -131,11 +135,11 @@ def test_operation(pm, chain):
     chain.mine(1)
 
     # 6 hours for pricepershare to go up
-    chain.sleep(2400*6)
+    chain.sleep(2400 * 6)
     chain.mine(1)
 
-    #now we deal with winning a drawing. Both bonus and extra tickets.
-    #basically just airdrop both, that's how winning works anyways
+    # now we deal with winning a drawing. Both bonus and extra tickets.
+    # basically just airdrop both, that's how winning works anyways
     ticket.transferFrom(gov, strategy, Wei("1000 ether"), {"from": gov})
     bonus.transferFrom(gov, strategy, Wei("10 ether"), {"from": gov})
 

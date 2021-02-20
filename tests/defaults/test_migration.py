@@ -3,7 +3,7 @@
 #       Show that nothing is lost!
 
 
-def test_migration(token, vault, strategy, amount, Strategy, strategist, gov):
+def test_migration(token, vault, strategy, amount, strategist, gov):
     # Deposit to the vault and harvest
     token.approve(vault.address, amount, {"from": gov})
     vault.deposit(amount, {"from": gov})
