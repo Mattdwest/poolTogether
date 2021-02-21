@@ -1,17 +1,12 @@
-# TODO: Add tests here that show the normal operation of this strategy
-#       Suggestions to include:
-#           - strategy loading and unloading (via Vault addStrategy/revokeStrategy)
-#           - change in loading (from low to high and high to low)
-#           - strategy operation at different loading levels (anticipated and "extreme")
-
 import pytest
-
 from brownie import Wei, accounts, Contract, config
 from brownie import StrategyDAIPoolTogether
 
 
 @pytest.mark.require_network("mainnet-fork")
-def test_operation(pm, chain):
+def test_clone(pm, chain):
+    # Copy paste from test_operation_dai please refactor using conf test
+
     dai_liquidity = accounts.at(
         "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7", force=True
     )  # using curve pool (lots of dai)
@@ -79,7 +74,6 @@ def test_operation(pm, chain):
 
     strategy = guardian.deploy(StrategyDAIPoolTogether, yDAI)
     strategy.initialize(wantPool, poolToken, uni, bonus, faucet, ticket)
-
     yDAI.addStrategy(strategy, 10_000, 0, 2 ** 256 - 1, 0, {"from": gov})
 
     dai.approve(gov, Wei("1000000 ether"), {"from": gov})
@@ -101,12 +95,6 @@ def test_operation(pm, chain):
     ticket.approve(uni, Wei("1000000 ether"), {"from": strategy})
     ticket.approve(uni, Wei("1000000 ether"), {"from": gov})
     ticket.approve(gov, Wei("1000000 ether"), {"from": gov})
-
-    # depositing DAI to generate crv3 tokens.
-    # crv3.approve(crv3_liquidity, Wei("1000000 ether"), {"from": crv3_liquidity})
-    # threePool.add_liquidity([Wei("200000 ether"), 0, 0], 0, {"from": gov})
-    # giving Gov some shares to mimic profit
-    # yCRV3.depositAll({"from": gov})
 
     # users deposit to vault
     yDAI.deposit(Wei("1000 ether"), {"from": bob})
@@ -167,16 +155,17 @@ def test_operation(pm, chain):
     # We should have made profit
     assert yDAI.pricePerShare() > 1e18
 
-    pass
+    # USDC section
+    usdc = Contract(
+        "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48", owner=gov
+    )  # usdc token
+    Vault = pm(config["dependencies"][0]).Vault
+    yUSDC = Vault.deploy({"from": gov})
+    yUSDC.initialize(usdc, gov, rewards, "", "")
+    yUSDC.setDepositLimit(Wei("1000000 ether"))
 
-    ##crv3.transferFrom(gov, bob, Wei("100000 ether"), {"from": gov})
-    ##crv3.transferFrom(gov, alice, Wei("788000 ether"), {"from": gov})
-
-    # yUSDT.deposit(Wei("100000 ether"), {"from": bob})
-    # yUSDT.deposit(Wei("788000 ether"), {"from": alice})
-
-    # strategy.harvest()
-
-    # assert dai.balanceOf(strategy) == 0
-    # assert yUSDT3.balanceOf(strategy) > 0
-    # assert ycrv3.balanceOf(strategy) > 0
+    tx = strategy.clone(
+        yUSDC, gov, gov, gov, wantPool, poolToken, uni, bonus, faucet, ticket
+    )
+    usdc_strategy = StrategyDAIPoolTogether.at(tx.return_value)
+    assert usdc_strategy.vault() == yUSDC
