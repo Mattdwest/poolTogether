@@ -8,13 +8,15 @@ import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/math/Math.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
-import {BaseStrategy} from "@yearnvaults/contracts/BaseStrategy.sol";
+import {
+    BaseStrategyInitializable
+} from "@yearnvaults/contracts/BaseStrategy.sol";
 
 import "../../interfaces/poolTogether/IPoolTogether.sol";
 import "../../interfaces/poolTogether/IPoolFaucet.sol";
 import "../../interfaces/uniswap/Uni.sol";
 
-contract StrategyDAIPoolTogether is BaseStrategy {
+contract StrategyDAIPoolTogether is BaseStrategyInitializable {
     using SafeERC20 for IERC20;
     using Address for address;
     using SafeMath for uint256;
@@ -26,17 +28,20 @@ contract StrategyDAIPoolTogether is BaseStrategy {
     address public faucet;
     address public ticket;
     address public refer = address(0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7);
+
+    // TODO: modify to a method so we can use want as part of the name
     string public constant override name = "StrategyDAIPoolTogether";
 
-    constructor(
-        address _vault,
+    constructor(address _vault) public BaseStrategyInitializable(_vault) {}
+
+    function _initialize(
         address _wantPool,
         address _poolToken,
         address _unirouter,
         address _bonus,
         address _faucet,
         address _ticket
-    ) public BaseStrategy(_vault) {
+    ) internal {
         wantPool = _wantPool;
         poolToken = _poolToken;
         unirouter = _unirouter;
@@ -47,6 +52,79 @@ contract StrategyDAIPoolTogether is BaseStrategy {
         IERC20(want).safeApprove(wantPool, uint256(-1));
         IERC20(poolToken).safeApprove(unirouter, uint256(-1));
         IERC20(bonus).safeApprove(unirouter, uint256(-1));
+    }
+
+    function initializeParent(
+        address _vault,
+        address _strategist,
+        address _rewards,
+        address _keeper
+    ) public {
+        super._initialize(_vault, _strategist, _rewards, _keeper);
+    }
+
+    function initialize(
+        address _wantPool,
+        address _poolToken,
+        address _unirouter,
+        address _bonus,
+        address _faucet,
+        address _ticket
+    ) external {
+        _initialize(
+            _wantPool,
+            _poolToken,
+            _unirouter,
+            _bonus,
+            _faucet,
+            _ticket
+        );
+    }
+
+    function clone(
+        address _vault,
+        address _strategist,
+        address _rewards,
+        address _keeper,
+        address _wantPool,
+        address _poolToken,
+        address _unirouter,
+        address _bonus,
+        address _faucet,
+        address _ticket
+    ) external returns (address newStrategy) {
+        // Copied from https://github.com/optionality/clone-factory/blob/master/contracts/CloneFactory.sol
+        bytes20 addressBytes = bytes20(address(this));
+
+        assembly {
+            // EIP-1167 bytecode
+            let clone_code := mload(0x40)
+            mstore(
+                clone_code,
+                0x3d602d80600a3d3981f3363d3d373d3d3d363d73000000000000000000000000
+            )
+            mstore(add(clone_code, 0x14), addressBytes)
+            mstore(
+                add(clone_code, 0x28),
+                0x5af43d82803e903d91602b57fd5bf30000000000000000000000000000000000
+            )
+            newStrategy := create(0, clone_code, 0x37)
+        }
+
+        StrategyDAIPoolTogether(newStrategy).initializeParent(
+            _vault,
+            _strategist,
+            _rewards,
+            _keeper
+        );
+        StrategyDAIPoolTogether(newStrategy).initialize(
+            _wantPool,
+            _poolToken,
+            _unirouter,
+            _bonus,
+            _faucet,
+            _ticket
+        );
     }
 
     function protectedTokens()
