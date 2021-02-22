@@ -3,11 +3,11 @@
 #       Show that nothing is lost!
 
 
-def test_migration(token, vault, strategy, amount, strategist, gov):
+def test_migration(token, vault, strategy, amount, strategist, gov, ticket):
     # Deposit to the vault and harvest
     token.approve(vault.address, amount, {"from": gov})
     vault.deposit(amount, {"from": gov})
-    strategy.harvest()
+    strategy.harvest({"from": gov})
     assert token.balanceOf(strategy.address) == amount
 
     # migrate to a new strategy

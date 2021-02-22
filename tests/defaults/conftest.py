@@ -38,6 +38,10 @@ def token():
     token_address = "0x6b175474e89094c44da98b954eedeac495271d0f"  # this should be the address of the ERC-20 used by the strategy/vault (DAI)
     yield Contract(token_address)
 
+@pytest.fixture
+def ticket():
+    token_address = "0x334cbb5858417aee161b53ee0d5349ccf54514cf"  # this should be the address of the ERC-20 used by the strategy/vault (DAI)
+    yield Contract(token_address)
 
 @pytest.fixture
 def amount(accounts, token):

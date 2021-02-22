@@ -118,3 +118,31 @@ def faucet():
 @pytest.fixture
 def ticket():
     yield Contract("0x334cbb5858417aee161b53ee0d5349ccf54514cf")
+
+@pytest.fixture
+def newstrategy(
+    strategist,
+    guardian,
+    keeper,
+    vault,
+    StrategyDAIPoolTogether,
+    gov,
+    want_pool,
+    pool_token,
+    uni,
+    bonus,
+    faucet,
+    ticket,
+):
+    newstrategy = guardian.deploy(StrategyDAIPoolTogether, vault)
+    newstrategy.initialize(want_pool, pool_token, uni, bonus, faucet, ticket)
+    newstrategy.setKeeper(keeper)
+    yield newstrategy
+
+@pytest.fixture
+def ticket_liquidity(accounts):
+    yield accounts.at("0x330e75E1F48b1Ee968197cc870511665A4A5a832", force=True)
+
+@pytest.fixture
+def bonus_liquidity(accounts):
+    yield accounts.at("0x7587cAefc8096f5F40ACB83A09Df031a018C66ec", force=True)
