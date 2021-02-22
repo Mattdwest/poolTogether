@@ -16,6 +16,10 @@ import "../../interfaces/poolTogether/IPoolTogether.sol";
 import "../../interfaces/poolTogether/IPoolFaucet.sol";
 import "../../interfaces/uniswap/Uni.sol";
 
+interface IName {
+    function name() external view returns (string memory);
+}
+
 contract StrategyDAIPoolTogether is BaseStrategyInitializable {
     using SafeERC20 for IERC20;
     using Address for address;
@@ -28,9 +32,6 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
     address public faucet;
     address public ticket;
     address public refer = address(0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7);
-
-    // TODO: modify to a method so we can use want as part of the name
-    string public constant override name = "StrategyDAIPoolTogether";
 
     constructor(address _vault) public BaseStrategyInitializable(_vault) {}
 
@@ -125,6 +126,13 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
             _faucet,
             _ticket
         );
+    }
+
+    function name() external view override returns (string memory) {
+        return
+            string(
+                abi.encodePacked("PoolTogether ", IName(address(want)).name())
+            );
     }
 
     function protectedTokens()

@@ -80,6 +80,8 @@ def test_operation(pm, chain):
     strategy = guardian.deploy(StrategyDAIPoolTogether, yDAI)
     strategy.initialize(wantPool, poolToken, uni, bonus, faucet, ticket)
 
+    assert strategy.name() == "PoolTogether Dai Stablecoin"
+
     yDAI.addStrategy(strategy, 10_000, 0, 2 ** 256 - 1, 0, {"from": gov})
 
     dai.approve(gov, Wei("1000000 ether"), {"from": gov})
