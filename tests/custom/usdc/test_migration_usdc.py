@@ -43,7 +43,7 @@ def test_operation(
     vault.deposit(4000_000_000, {"from": alice})
     vault.deposit(10_000_000, {"from": tinytim})
 
-    #first harvest
+    # first harvest
     chain.mine(1)
     strategy.harvest({"from": gov})
 

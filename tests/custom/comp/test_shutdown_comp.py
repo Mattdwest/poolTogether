@@ -27,7 +27,9 @@ def test_operation(
     tinytim,
 ):
     comp.approve(comp_liquidity, Wei("1000000 ether"), {"from": comp_liquidity})
-    comp.transferFrom(comp_liquidity, gov, Wei("300000 ether"), {"from": comp_liquidity})
+    comp.transferFrom(
+        comp_liquidity, gov, Wei("300000 ether"), {"from": comp_liquidity}
+    )
     comp.approve(gov, Wei("1000000 ether"), {"from": gov})
     comp.transferFrom(gov, bob, Wei("1000 ether"), {"from": gov})
     comp.transferFrom(gov, alice, Wei("4000 ether"), {"from": gov})
@@ -48,7 +50,7 @@ def test_operation(
     chain.sleep(3600 * 24 * 7)
     chain.mine(1)
 
-    #first harvest
+    # first harvest
     strategy.harvest({"from": gov})
     chain.mine(1)
 
