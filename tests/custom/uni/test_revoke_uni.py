@@ -3,6 +3,7 @@ import pytest
 from brownie import Wei, accounts, Contract, config
 from brownie import StrategyDAIPoolTogether
 
+
 def test_revoke_strategy_from_vault(
     chain,
     vault,
@@ -22,7 +23,9 @@ def test_revoke_strategy_from_vault(
     # Funding and vault approvals
     # Can be also done from the conftest and remove dai_liquidity from here
     unitoken.approve(uni_liquidity, Wei("1000000 ether"), {"from": uni_liquidity})
-    unitoken.transferFrom(uni_liquidity, gov, Wei("300000 ether"), {"from": uni_liquidity})
+    unitoken.transferFrom(
+        uni_liquidity, gov, Wei("300000 ether"), {"from": uni_liquidity}
+    )
     unitoken.approve(gov, Wei("1000000 ether"), {"from": gov})
     unitoken.transferFrom(gov, bob, Wei("1000 ether"), {"from": gov})
     unitoken.transferFrom(gov, alice, Wei("4000 ether"), {"from": gov})
