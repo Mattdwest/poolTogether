@@ -43,7 +43,7 @@ def test_operation(
     vault.deposit(Wei("4000 ether"), {"from": alice})
     vault.deposit(Wei("10 ether"), {"from": tinytim})
 
-    #first harvest
+    # first harvest
     chain.mine(1)
     strategy.harvest({"from": gov})
 

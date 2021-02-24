@@ -29,7 +29,9 @@ def test_operation(
 ):
 
     comp.approve(comp_liquidity, Wei("1000000 ether"), {"from": comp_liquidity})
-    comp.transferFrom(comp_liquidity, gov, Wei("300000 ether"), {"from": comp_liquidity})
+    comp.transferFrom(
+        comp_liquidity, gov, Wei("300000 ether"), {"from": comp_liquidity}
+    )
     comp.approve(gov, Wei("1000000 ether"), {"from": gov})
     comp.transferFrom(gov, bob, Wei("1000 ether"), {"from": gov})
     comp.transferFrom(gov, alice, Wei("4000 ether"), {"from": gov})
@@ -43,7 +45,7 @@ def test_operation(
     vault.deposit(Wei("4000 ether"), {"from": alice})
     vault.deposit(Wei("10 ether"), {"from": tinytim})
 
-    #first harvest
+    # first harvest
     chain.mine(1)
     strategy.harvest({"from": gov})
 

@@ -119,6 +119,7 @@ def faucet():
 def ticket():
     yield Contract("0x334cbb5858417aee161b53ee0d5349ccf54514cf")
 
+
 @pytest.fixture
 def newstrategy(
     strategist,
@@ -139,9 +140,11 @@ def newstrategy(
     newstrategy.setKeeper(keeper)
     yield newstrategy
 
+
 @pytest.fixture
 def ticket_liquidity(accounts):
     yield accounts.at("0x330e75E1F48b1Ee968197cc870511665A4A5a832", force=True)
+
 
 @pytest.fixture
 def bonus_liquidity(accounts):

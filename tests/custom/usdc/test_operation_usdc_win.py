@@ -42,13 +42,17 @@ def test_operation(
     usdc.approve(vault, 1_000_000_000000, {"from": tinytim})
 
     bonus.approve(bonus_liquidity, Wei("1000000 ether"), {"from": bonus_liquidity})
-    bonus.transferFrom(bonus_liquidity, gov, Wei("300000 ether"), {"from": bonus_liquidity})
+    bonus.transferFrom(
+        bonus_liquidity, gov, Wei("300000 ether"), {"from": bonus_liquidity}
+    )
     bonus.approve(uni, Wei("1000000 ether"), {"from": strategy})
     bonus.approve(uni, Wei("1000000 ether"), {"from": gov})
     bonus.approve(gov, Wei("1000000 ether"), {"from": gov})
 
     ticket.approve(ticket_liquidity, 1_000_000_000000, {"from": ticket_liquidity})
-    ticket.transferFrom(ticket_liquidity, gov, 30_000_000000, {"from": ticket_liquidity})
+    ticket.transferFrom(
+        ticket_liquidity, gov, 30_000_000000, {"from": ticket_liquidity}
+    )
     ticket.approve(uni, 1_000_000_000000, {"from": strategy})
     ticket.approve(uni, 1_000_000_000000, {"from": gov})
     ticket.approve(gov, 1_000_000_000000, {"from": gov})
@@ -58,7 +62,7 @@ def test_operation(
     vault.deposit(4000_000_000, {"from": alice})
     vault.deposit(10_000_000, {"from": tinytim})
 
-    #first harvest
+    # first harvest
     chain.mine(1)
     strategy.harvest({"from": gov})
 
@@ -88,7 +92,7 @@ def test_operation(
 
     # now we deal with winning a drawing. Both bonus and extra tickets.
     # basically just airdrop both, that's how winning works anyways
-    ticket.transferFrom(gov, strategy,1_000_000000, {"from": gov})
+    ticket.transferFrom(gov, strategy, 1_000_000000, {"from": gov})
     bonus.transferFrom(gov, strategy, Wei("10 ether"), {"from": gov})
 
     strategy.harvest({"from": gov})

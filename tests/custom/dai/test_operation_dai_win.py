@@ -42,13 +42,17 @@ def test_operation(
     dai.approve(vault, Wei("1000000 ether"), {"from": tinytim})
 
     bonus.approve(bonus_liquidity, Wei("1000000 ether"), {"from": bonus_liquidity})
-    bonus.transferFrom(bonus_liquidity, gov, Wei("300000 ether"), {"from": bonus_liquidity})
+    bonus.transferFrom(
+        bonus_liquidity, gov, Wei("300000 ether"), {"from": bonus_liquidity}
+    )
     bonus.approve(uni, Wei("1000000 ether"), {"from": strategy})
     bonus.approve(uni, Wei("1000000 ether"), {"from": gov})
     bonus.approve(gov, Wei("1000000 ether"), {"from": gov})
 
     ticket.approve(ticket_liquidity, Wei("1000000 ether"), {"from": ticket_liquidity})
-    ticket.transferFrom(ticket_liquidity, gov, Wei("300000 ether"), {"from": ticket_liquidity})
+    ticket.transferFrom(
+        ticket_liquidity, gov, Wei("300000 ether"), {"from": ticket_liquidity}
+    )
     ticket.approve(uni, Wei("1000000 ether"), {"from": strategy})
     ticket.approve(uni, Wei("1000000 ether"), {"from": gov})
     ticket.approve(gov, Wei("1000000 ether"), {"from": gov})
@@ -58,7 +62,7 @@ def test_operation(
     vault.deposit(Wei("4000 ether"), {"from": alice})
     vault.deposit(Wei("10 ether"), {"from": tinytim})
 
-    #first harvest
+    # first harvest
     chain.mine(1)
     strategy.harvest({"from": gov})
 

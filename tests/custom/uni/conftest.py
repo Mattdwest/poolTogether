@@ -91,7 +91,7 @@ def strategy(
 
 
 @pytest.fixture
-def uni(): #unirouter contract
+def uni():  # unirouter contract
     yield Contract("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
 
 
@@ -119,6 +119,7 @@ def faucet():
 def ticket():
     yield Contract("0xa92a861fc11b99b24296af880011b47f9cafb5ab")
 
+
 @pytest.fixture
 def newstrategy(
     strategist,
@@ -139,9 +140,11 @@ def newstrategy(
     newstrategy.setKeeper(keeper)
     yield newstrategy
 
+
 @pytest.fixture
 def ticket_liquidity(accounts):
     yield accounts.at("0x330e75e1f48b1ee968197cc870511665a4a5a832", force=True)
+
 
 @pytest.fixture
 def bonus_liquidity(accounts):

@@ -48,7 +48,7 @@ def test_operation(
     chain.sleep(3600 * 24 * 7)
     chain.mine(1)
 
-    #first harvest
+    # first harvest
     strategy.harvest({"from": gov})
     chain.mine(1)
 
