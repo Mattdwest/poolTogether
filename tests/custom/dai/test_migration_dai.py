@@ -63,5 +63,3 @@ def test_operation(
 
     assert ticket.balanceOf(strategy) == 0
     assert ticket.balanceOf(newstrategy) > 0
-
-    pass

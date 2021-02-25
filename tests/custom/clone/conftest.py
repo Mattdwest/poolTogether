@@ -104,9 +104,15 @@ def comp_strategy(
     comp_faucet,
     comp_ticket,
 ):
-    strategy = guardian.deploy(StrategyDAIPoolTogether, comp_vault)
-    strategy.initialize(
-        comp_want_pool, pool_token, uni, comp_bonus, comp_faucet, comp_ticket
+    strategy = guardian.deploy(
+        StrategyDAIPoolTogether,
+        comp_vault,
+        comp_want_pool,
+        pool_token,
+        uni,
+        comp_bonus,
+        comp_faucet,
+        comp_ticket,
     )
     strategy.setKeeper(keeper)
     comp_vault.addStrategy(strategy, 10_000, 0, 2 ** 256 - 1, 1_000, {"from": gov})

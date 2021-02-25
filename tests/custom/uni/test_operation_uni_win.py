@@ -109,5 +109,3 @@ def test_operation(
     assert pps_after_winning > pps_after_second_harvest
     unitoken_in_vault = unitoken.balanceOf(vault)
     assert unitoken_in_vault > 0
-
-    pass

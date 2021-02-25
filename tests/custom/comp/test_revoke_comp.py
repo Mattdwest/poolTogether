@@ -51,5 +51,3 @@ def test_revoke_strategy_from_vault(
     vault.revokeStrategy(strategy, {"from": gov})
     strategy.harvest({"from": gov})
     assert comp.balanceOf(vault) > deposit_amount
-
-    pass

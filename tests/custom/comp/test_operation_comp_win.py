@@ -109,5 +109,3 @@ def test_operation(
     assert pps_after_winning > pps_after_second_harvest
     dai_in_vault = comp.balanceOf(vault)
     assert dai_in_vault > 0
-
-    pass

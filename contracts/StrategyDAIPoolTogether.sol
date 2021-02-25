@@ -33,9 +33,27 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
     address public ticket;
     address public refer = address(0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7);
 
-    constructor(address _vault) public BaseStrategyInitializable(_vault) {}
+    constructor(
+        address _vault,
+        address _wantPool,
+        address _poolToken,
+        address _unirouter,
+        address _bonus,
+        address _faucet,
+        address _ticket
+    ) public BaseStrategyInitializable(_vault) {
+        // Constructor should initialize local variables
+        _initializeThis(
+            _wantPool,
+            _poolToken,
+            _unirouter,
+            _bonus,
+            _faucet,
+            _ticket
+        );
+    }
 
-    function _initialize(
+    function _initializeThis(
         address _wantPool,
         address _poolToken,
         address _unirouter,
@@ -55,16 +73,35 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
         IERC20(bonus).safeApprove(unirouter, uint256(-1));
     }
 
-    function initializeParent(
+    function _initialize(
         address _vault,
         address _strategist,
         address _rewards,
-        address _keeper
-    ) public {
+        address _keeper,
+        address _wantPool,
+        address _poolToken,
+        address _unirouter,
+        address _bonus,
+        address _faucet,
+        address _ticket
+    ) internal {
+        // Parent initialize contains the double initialize check
         super._initialize(_vault, _strategist, _rewards, _keeper);
+        _initializeThis(
+            _wantPool,
+            _poolToken,
+            _unirouter,
+            _bonus,
+            _faucet,
+            _ticket
+        );
     }
 
     function initialize(
+        address _vault,
+        address _strategist,
+        address _rewards,
+        address _keeper,
         address _wantPool,
         address _poolToken,
         address _unirouter,
@@ -73,6 +110,10 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
         address _ticket
     ) external {
         _initialize(
+            _vault,
+            _strategist,
+            _rewards,
+            _keeper,
             _wantPool,
             _poolToken,
             _unirouter,
@@ -112,13 +153,11 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
             newStrategy := create(0, clone_code, 0x37)
         }
 
-        StrategyDAIPoolTogether(newStrategy).initializeParent(
+        StrategyDAIPoolTogether(newStrategy).initialize(
             _vault,
             _strategist,
             _rewards,
-            _keeper
-        );
-        StrategyDAIPoolTogether(newStrategy).initialize(
+            _keeper,
             _wantPool,
             _poolToken,
             _unirouter,

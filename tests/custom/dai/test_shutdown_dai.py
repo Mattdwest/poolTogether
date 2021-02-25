@@ -77,5 +77,3 @@ def test_operation(
     vault.withdraw(e, tinytim, 75, {"from": tinytim})
 
     assert dai.balanceOf(tinytim) > 0
-
-    pass

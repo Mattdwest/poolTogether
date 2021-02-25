@@ -83,8 +83,16 @@ def strategy(
     faucet,
     ticket,
 ):
-    strategy = guardian.deploy(StrategyDAIPoolTogether, vault)
-    strategy.initialize(want_pool, pool_token, uni, bonus, faucet, ticket)
+    strategy = guardian.deploy(
+        StrategyDAIPoolTogether,
+        vault,
+        want_pool,
+        pool_token,
+        uni,
+        bonus,
+        faucet,
+        ticket,
+    )
     strategy.setKeeper(keeper)
     vault.addStrategy(strategy, 10_000, 0, 2 ** 256 - 1, 1_000, {"from": gov})
     yield strategy
@@ -135,8 +143,16 @@ def newstrategy(
     faucet,
     ticket,
 ):
-    newstrategy = guardian.deploy(StrategyDAIPoolTogether, vault)
-    newstrategy.initialize(want_pool, pool_token, uni, bonus, faucet, ticket)
+    newstrategy = guardian.deploy(
+        StrategyDAIPoolTogether,
+        vault,
+        want_pool,
+        pool_token,
+        uni,
+        bonus,
+        faucet,
+        ticket,
+    )
     newstrategy.setKeeper(keeper)
     yield newstrategy
 

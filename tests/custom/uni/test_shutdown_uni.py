@@ -79,5 +79,3 @@ def test_operation(
     vault.withdraw(e, tinytim, 75, {"from": tinytim})
 
     assert unitoken.balanceOf(tinytim) > 0
-
-    pass
