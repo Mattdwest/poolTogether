@@ -44,24 +44,27 @@ def test_operation(
     vault.deposit(Wei("4000 ether"), {"from": alice})
     vault.deposit(Wei("10 ether"), {"from": tinytim})
 
+    vault.setManagementFee(0, {"from": gov})
+    vault.setPerformanceFee(0, {"from": gov})
+
     # First harvest
     strategy.harvest({"from": gov})
 
     assert ticket.balanceOf(strategy) > 0
-    chain.sleep(3600 * 24 * 7)
+    chain.sleep(3600 * 24 * 14)
     chain.mine(1)
     pps_after_first_harvest = vault.pricePerShare()
 
     # 6 hours for pricepershare to go up, there should be profit
     strategy.harvest({"from": gov})
-    chain.sleep(2400 * 6)
+    chain.sleep(3600 * 6)
     chain.mine(1)
     pps_after_second_harvest = vault.pricePerShare()
     assert pps_after_second_harvest > pps_after_first_harvest
 
     # 6 hours for pricepershare to go up
     strategy.harvest({"from": gov})
-    chain.sleep(2400 * 6)
+    chain.sleep(3600 * 6)
     chain.mine(1)
 
     alice_vault_balance = vault.balanceOf(alice)

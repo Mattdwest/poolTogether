@@ -32,7 +32,7 @@ def test_operation(
 ):
 
     comp.approve(comp_liquidity, Wei("1000000 ether"), {"from": comp_liquidity})
-    comp.transferFrom(comp_liquidity, gov, Wei("30000 ether"), {"from": comp_liquidity})
+    comp.transferFrom(comp_liquidity, gov, Wei("10000 ether"), {"from": comp_liquidity})
     comp.approve(gov, Wei("1000000 ether"), {"from": gov})
     comp.transferFrom(gov, bob, Wei("1000 ether"), {"from": gov})
     comp.transferFrom(gov, alice, Wei("4000 ether"), {"from": gov})
@@ -62,12 +62,15 @@ def test_operation(
     vault.deposit(Wei("4000 ether"), {"from": alice})
     vault.deposit(Wei("10 ether"), {"from": tinytim})
 
+    vault.setManagementFee(0, {"from": gov})
+    vault.setPerformanceFee(0, {"from": gov})
+
     # first harvest
     chain.mine(1)
     strategy.harvest({"from": gov})
 
     assert ticket.balanceOf(strategy) > 0
-    chain.sleep(3600 * 24 * 7)
+    chain.sleep(3600 * 24 * 14)
     chain.mine(1)
     pps_after_first_harvest = vault.pricePerShare()
 
@@ -76,7 +79,7 @@ def test_operation(
     chain.mine(1)
 
     # 6 hours for pricepershare to go up
-    chain.sleep(2400 * 6)
+    chain.sleep(3600 * 6)
     chain.mine(1)
 
     pps_after_second_harvest = vault.pricePerShare()
@@ -87,7 +90,7 @@ def test_operation(
     chain.mine(1)
 
     # 6 hours for pricepershare to go up
-    chain.sleep(2400 * 6)
+    chain.sleep(3600 * 6)
     chain.mine(1)
 
     # now we deal with winning a drawing. Both bonus and extra tickets.
@@ -99,7 +102,7 @@ def test_operation(
     chain.mine(1)
 
     # 6 hours for pricepershare to go up
-    chain.sleep(2400 * 6)
+    chain.sleep(3600 * 6)
     chain.mine(1)
 
     pps_after_winning = vault.pricePerShare()
