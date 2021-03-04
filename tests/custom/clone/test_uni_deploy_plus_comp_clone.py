@@ -38,7 +38,7 @@ def test_clone(
         )
 
     # Clone the strategy
-    tx = comp_strategy.clone(
+    tx = comp_strategy.clonePoolTogether(
         uni_vault,
         gov,
         gov,

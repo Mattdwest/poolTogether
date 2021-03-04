@@ -61,6 +61,11 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
         address _faucet,
         address _ticket
     ) internal {
+        require(
+            address(wantPool) == address(0),
+            "StrategyDAIPoolTogether already initialized"
+        );
+
         wantPool = _wantPool;
         poolToken = _poolToken;
         unirouter = _unirouter;
@@ -123,7 +128,7 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
         );
     }
 
-    function clone(
+    function clonePoolTogether(
         address _vault,
         address _strategist,
         address _rewards,
