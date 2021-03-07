@@ -23,9 +23,7 @@ def test_revoke_strategy_from_vault(
     # Funding and vault approvals
     # Can be also done from the conftest and remove dai_liquidity from here
     comp.approve(comp_liquidity, Wei("1000000 ether"), {"from": comp_liquidity})
-    comp.transferFrom(
-        comp_liquidity, gov, Wei("300000 ether"), {"from": comp_liquidity}
-    )
+    comp.transferFrom(comp_liquidity, gov, Wei("10000 ether"), {"from": comp_liquidity})
     comp.approve(gov, Wei("1000000 ether"), {"from": gov})
     comp.transferFrom(gov, bob, Wei("1000 ether"), {"from": gov})
     comp.transferFrom(gov, alice, Wei("4000 ether"), {"from": gov})
@@ -39,17 +37,18 @@ def test_revoke_strategy_from_vault(
     vault.deposit(Wei("4000 ether"), {"from": alice})
     vault.deposit(Wei("10 ether"), {"from": tinytim})
 
+    vault.setManagementFee(0, {"from": gov})
+    vault.setPerformanceFee(0, {"from": gov})
+
     deposit_amount = comp.balanceOf(vault)
 
     # First harvest
     strategy.harvest({"from": gov})
 
     assert ticket.balanceOf(strategy) > 0
-    chain.sleep(3600 * 24 * 7)
+    chain.sleep(3600 * 24 * 14)
     chain.mine(1)
 
     vault.revokeStrategy(strategy, {"from": gov})
     strategy.harvest({"from": gov})
     assert comp.balanceOf(vault) > deposit_amount
-
-    pass

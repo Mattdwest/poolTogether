@@ -83,8 +83,16 @@ def strategy(
     faucet,
     ticket,
 ):
-    strategy = guardian.deploy(StrategyDAIPoolTogether, vault)
-    strategy.initialize(want_pool, pool_token, uni, bonus, faucet, ticket)
+    strategy = guardian.deploy(
+        StrategyDAIPoolTogether,
+        vault,
+        want_pool,
+        pool_token,
+        uni,
+        bonus,
+        faucet,
+        ticket,
+    )
     strategy.setKeeper(keeper)
     vault.addStrategy(strategy, 10_000, 0, 2 ** 256 - 1, 1_000, {"from": gov})
     yield strategy
@@ -135,15 +143,23 @@ def newstrategy(
     faucet,
     ticket,
 ):
-    newstrategy = guardian.deploy(StrategyDAIPoolTogether, vault)
-    newstrategy.initialize(want_pool, pool_token, uni, bonus, faucet, ticket)
+    newstrategy = guardian.deploy(
+        StrategyDAIPoolTogether,
+        vault,
+        want_pool,
+        pool_token,
+        uni,
+        bonus,
+        faucet,
+        ticket,
+    )
     newstrategy.setKeeper(keeper)
     yield newstrategy
 
 
 @pytest.fixture
 def ticket_liquidity(accounts):
-    yield accounts.at("0x330e75E1F48b1Ee968197cc870511665A4A5a832", force=True)
+    yield accounts.at("0x227c6494c04bbab7ccb1b81f123b7f016db4e362", force=True)
 
 
 @pytest.fixture

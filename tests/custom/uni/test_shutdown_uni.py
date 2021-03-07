@@ -38,6 +38,9 @@ def test_operation(
     unitoken.approve(vault, Wei("1000000 ether"), {"from": alice})
     unitoken.approve(vault, Wei("1000000 ether"), {"from": tinytim})
 
+    vault.setManagementFee(0, {"from": gov})
+    vault.setPerformanceFee(0, {"from": gov})
+
     # users deposit to vault
     vault.deposit(Wei("1000 ether"), {"from": bob})
     vault.deposit(Wei("4000 ether"), {"from": alice})
@@ -47,7 +50,7 @@ def test_operation(
     strategy.harvest({"from": gov})
 
     assert ticket.balanceOf(strategy) > 0
-    chain.sleep(3600 * 24 * 7)
+    chain.sleep(3600 * 24 * 14)
     chain.mine(1)
 
     # first harvest
@@ -55,7 +58,7 @@ def test_operation(
     chain.mine(1)
 
     # 6 hours for pricepershare to go up
-    chain.sleep(2400 * 6)
+    chain.sleep(3600 * 6)
     chain.mine(1)
 
     strategy.setEmergencyExit({"from": gov})
@@ -79,5 +82,3 @@ def test_operation(
     vault.withdraw(e, tinytim, 75, {"from": tinytim})
 
     assert unitoken.balanceOf(tinytim) > 0
-
-    pass

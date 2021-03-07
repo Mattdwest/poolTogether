@@ -39,17 +39,18 @@ def test_revoke_strategy_from_vault(
     vault.deposit(Wei("4000 ether"), {"from": alice})
     vault.deposit(Wei("10 ether"), {"from": tinytim})
 
+    vault.setManagementFee(0, {"from": gov})
+    vault.setPerformanceFee(0, {"from": gov})
+
     deposit_amount = unitoken.balanceOf(vault)
 
     # First harvest
     strategy.harvest({"from": gov})
 
     assert ticket.balanceOf(strategy) > 0
-    chain.sleep(3600 * 24 * 7)
+    chain.sleep(3600 * 24 * 14)
     chain.mine(1)
 
     vault.revokeStrategy(strategy, {"from": gov})
     strategy.harvest({"from": gov})
     assert unitoken.balanceOf(vault) > deposit_amount
-
-    pass
