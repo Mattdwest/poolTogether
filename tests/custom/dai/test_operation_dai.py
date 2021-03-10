@@ -25,6 +25,7 @@ def test_operation(
     alice,
     bob,
     tinytim,
+    pool_token,
 ):
 
     # Funding and vault approvals
@@ -85,3 +86,4 @@ def test_operation(
 
     # We should have made profit
     assert vault.pricePerShare() > 1e18
+    assert pool_token.balanceOf(gov) > 0
