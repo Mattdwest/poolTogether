@@ -54,7 +54,7 @@ def comp_liquidity(accounts):
 
 @pytest.fixture
 def uni_liquidity(accounts):
-    yield accounts.at("0x5c72ab1005be6452c0417cc0b0c4d549fb7ae6e1", force=True)
+    yield accounts.at("0x47173b170c64d16393a52e6c480b3ad8c302ba1e", force=True)
 
 
 @pytest.fixture
