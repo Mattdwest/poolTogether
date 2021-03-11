@@ -7,7 +7,7 @@
 import pytest
 
 from brownie import Wei, accounts, Contract, config
-from brownie import StrategyDAIPoolTogether
+from brownie import StrategyPoolTogether
 
 
 @pytest.mark.require_network("mainnet-fork")

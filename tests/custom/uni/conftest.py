@@ -49,7 +49,7 @@ def tinytim(accounts):
 
 @pytest.fixture
 def uni_liquidity(accounts):
-    yield accounts.at("0x5c72ab1005be6452c0417cc0b0c4d549fb7ae6e1", force=True)
+    yield accounts.at("0xbe0eb53f46cd790cd13851d5eff43d12404d33e8", force=True)
 
 
 @pytest.fixture
@@ -74,7 +74,7 @@ def strategy(
     guardian,
     keeper,
     vault,
-    StrategyDAIPoolTogether,
+    StrategyPoolTogether,
     gov,
     want_pool,
     pool_token,
@@ -84,7 +84,7 @@ def strategy(
     ticket,
 ):
     strategy = guardian.deploy(
-        StrategyDAIPoolTogether,
+        StrategyPoolTogether,
         vault,
         want_pool,
         pool_token,
@@ -134,7 +134,7 @@ def newstrategy(
     guardian,
     keeper,
     vault,
-    StrategyDAIPoolTogether,
+    StrategyPoolTogether,
     gov,
     want_pool,
     pool_token,
@@ -144,7 +144,7 @@ def newstrategy(
     ticket,
 ):
     newstrategy = guardian.deploy(
-        StrategyDAIPoolTogether,
+        StrategyPoolTogether,
         vault,
         want_pool,
         pool_token,

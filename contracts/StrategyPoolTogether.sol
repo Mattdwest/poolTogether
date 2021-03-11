@@ -20,7 +20,7 @@ interface IName {
     function name() external view returns (string memory);
 }
 
-contract StrategyDAIPoolTogether is BaseStrategyInitializable {
+contract StrategyPoolTogether is BaseStrategyInitializable {
     using SafeERC20 for IERC20;
     using Address for address;
     using SafeMath for uint256;
@@ -66,7 +66,7 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
     ) internal {
         require(
             address(wantPool) == address(0),
-            "StrategyDAIPoolTogether already initialized"
+            "StrategyPoolTogether already initialized"
         );
 
         wantPool = _wantPool;
@@ -164,7 +164,7 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
             newStrategy := create(0, clone_code, 0x37)
         }
 
-        StrategyDAIPoolTogether(newStrategy).initialize(
+        StrategyPoolTogether(newStrategy).initialize(
             _vault,
             _strategist,
             _rewards,

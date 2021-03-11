@@ -1,7 +1,7 @@
 import pytest
 
 from brownie import Wei, accounts, Contract, config
-from brownie import StrategyDAIPoolTogether
+from brownie import StrategyPoolTogether
 
 
 def test_revoke_strategy_from_vault(

@@ -74,7 +74,7 @@ def strategy(
     guardian,
     keeper,
     vault,
-    StrategyDAIPoolTogether,
+    StrategyPoolTogether,
     gov,
     want_pool,
     pool_token,
@@ -84,7 +84,7 @@ def strategy(
     ticket,
 ):
     strategy = guardian.deploy(
-        StrategyDAIPoolTogether,
+        StrategyPoolTogether,
         vault,
         want_pool,
         pool_token,
@@ -134,7 +134,7 @@ def newstrategy(
     guardian,
     keeper,
     vault,
-    StrategyDAIPoolTogether,
+    StrategyPoolTogether,
     gov,
     want_pool,
     pool_token,
@@ -144,7 +144,7 @@ def newstrategy(
     ticket,
 ):
     newstrategy = guardian.deploy(
-        StrategyDAIPoolTogether,
+        StrategyPoolTogether,
         vault,
         want_pool,
         pool_token,
