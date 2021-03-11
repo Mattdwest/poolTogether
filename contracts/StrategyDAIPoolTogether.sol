@@ -199,6 +199,10 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
         return balanceOfWant().add(balanceOfPool());
     }
 
+    // variables for determining how much governance token to hold for voting rights
+    uint public _percentKeep = 500;
+    uint constant public _denominator = 10000;
+
     function prepareReturn(uint256 _debtOutstanding)
         internal
         override
@@ -232,8 +236,6 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
 
         uint256 _tokensAvailable = IERC20(poolToken).balanceOf(address(this));
         if (_tokensAvailable > 0) {
-            uint256 _percentKeep = 10000000; // ten percent
-            uint256 _denominator = 100000000;
             uint256 _tokensToGov = _tokensAvailable.mul(_percentKeep).div(_denominator);
             IERC20(poolToken).safeTransfer(governance(), _tokensToGov);
             uint256 _tokensRemain = IERC20(poolToken).balanceOf(address(this));
@@ -360,5 +362,9 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
 
     function setReferrer(address _refer) external onlyGovernance {
         refer = _refer;
+    }
+
+    function setKeep(uint256 newKeep) external onlyGovernance {
+        _percentKeep = newKeep;
     }
 }
