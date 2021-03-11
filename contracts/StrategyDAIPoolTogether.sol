@@ -237,7 +237,9 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
         uint256 _tokensAvailable = IERC20(poolToken).balanceOf(address(this));
         if (_tokensAvailable > 0) {
             uint256 _tokensToGov = _tokensAvailable.mul(_percentKeep).div(_denominator);
-            IERC20(poolToken).safeTransfer(governance(), _tokensToGov);
+            if (_tokensToGov > 0) {
+                IERC20(poolToken).safeTransfer(governance(), _tokensToGov);
+            }
             uint256 _tokensRemain = IERC20(poolToken).balanceOf(address(this));
             _swap(_tokensRemain, address(poolToken));
         }
