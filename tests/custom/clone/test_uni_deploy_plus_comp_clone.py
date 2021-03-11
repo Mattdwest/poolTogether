@@ -52,6 +52,7 @@ def test_clone(
         {"from": gov},
     )
     uni_strategy = StrategyDAIPoolTogether.at(tx.return_value)
+    assert uni_strategy.percentKeep() == 500
 
     # Shouldn't be able to call initialize again
     with brownie.reverts():

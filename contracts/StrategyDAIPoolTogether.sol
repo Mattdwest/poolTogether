@@ -25,13 +25,16 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
     using Address for address;
     using SafeMath for uint256;
 
+    // variables for determining how much governance token to hold for voting rights
+    uint256 public constant _denominator = 10000;
+    uint256 public percentKeep;
     address public wantPool;
     address public poolToken;
     address public unirouter;
     address public bonus;
     address public faucet;
     address public ticket;
-    address public refer = address(0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7);
+    address public refer;
 
     constructor(
         address _vault,
@@ -72,6 +75,9 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
         bonus = _bonus;
         faucet = _faucet;
         ticket = _ticket;
+
+        percentKeep = 500;
+        refer = address(0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7);
 
         IERC20(want).safeApprove(wantPool, uint256(-1));
         IERC20(poolToken).safeApprove(unirouter, uint256(-1));
@@ -199,10 +205,6 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
         return balanceOfWant().add(balanceOfPool());
     }
 
-    // variables for determining how much governance token to hold for voting rights
-    uint public percentKeep = 500;
-    uint constant public _denominator = 10000;
-
     function prepareReturn(uint256 _debtOutstanding)
         internal
         override
@@ -236,7 +238,8 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
 
         uint256 _tokensAvailable = IERC20(poolToken).balanceOf(address(this));
         if (_tokensAvailable > 0) {
-            uint256 _tokensToGov = _tokensAvailable.mul(percentKeep).div(_denominator);
+            uint256 _tokensToGov =
+                _tokensAvailable.mul(percentKeep).div(_denominator);
             if (_tokensToGov > 0) {
                 IERC20(poolToken).safeTransfer(governance(), _tokensToGov);
             }
@@ -296,7 +299,7 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
             _liquidatedAmount = _amountNeeded;
         } else {
             _liquidatedAmount = balanceOfWant;
-            _loss = (_amountNeeded.sub(balanceOfWant));
+            _loss = _amountNeeded.sub(balanceOfWant);
         }
     }
 
@@ -310,8 +313,8 @@ contract StrategyDAIPoolTogether is BaseStrategyInitializable {
             ticket,
             1e20
         );
-        uint256 balanceAfter = balanceOfWant();
-        return balanceAfter.sub(balanceOfWantBefore);
+
+        return balanceOfWant().sub(balanceOfWantBefore);
     }
 
     // transfers all tokens to new strategy
