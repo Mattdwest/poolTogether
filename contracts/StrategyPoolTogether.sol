@@ -78,7 +78,7 @@ contract StrategyPoolTogether is BaseStrategyInitializable {
         ticket = _ticket;
 
         percentKeep = 1000;
-        refer = address(0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7);
+        refer = address(0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde);
         treasury = address(0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde);
 
         IERC20(want).safeApprove(wantPool, uint256(-1));
