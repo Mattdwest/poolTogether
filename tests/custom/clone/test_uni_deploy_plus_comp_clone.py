@@ -5,7 +5,7 @@ from brownie import Wei, accounts, Contract, config
 
 @pytest.mark.require_network("mainnet-fork")
 def test_clone(
-    StrategyDAIPoolTogether,
+    StrategyPoolTogether,
     chain,
     gov,
     unitoken,
@@ -51,8 +51,8 @@ def test_clone(
         uni_ticket,
         {"from": gov},
     )
-    uni_strategy = StrategyDAIPoolTogether.at(tx.return_value)
-    assert uni_strategy.percentKeep() == 500
+    uni_strategy = StrategyPoolTogether.at(tx.return_value)
+    assert uni_strategy.percentKeep() == 1000
 
     # Shouldn't be able to call initialize again
     with brownie.reverts():

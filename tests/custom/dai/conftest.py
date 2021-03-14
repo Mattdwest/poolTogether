@@ -1,6 +1,10 @@
 import pytest
 from brownie import config, Contract
 
+# Snapshots the chain before each test and reverts after test completion.
+@pytest.fixture(scope="function", autouse=True)
+def shared_setup(fn_isolation):
+    pass
 
 @pytest.fixture
 def gov(accounts):
@@ -165,3 +169,7 @@ def ticket_liquidity(accounts):
 @pytest.fixture
 def bonus_liquidity(accounts):
     yield accounts.at("0x7587cAefc8096f5F40ACB83A09Df031a018C66ec", force=True)
+
+@pytest.fixture
+def treasury(accounts):
+    yield accounts.at("0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde", force=True)

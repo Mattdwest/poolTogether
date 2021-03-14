@@ -35,6 +35,7 @@ contract StrategyPoolTogether is BaseStrategyInitializable {
     address public faucet;
     address public ticket;
     address public refer;
+    address public treasury;
 
     constructor(
         address _vault,
@@ -78,6 +79,7 @@ contract StrategyPoolTogether is BaseStrategyInitializable {
 
         percentKeep = 1000;
         refer = address(0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7);
+        treasury = address(0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde);
 
         IERC20(want).safeApprove(wantPool, uint256(-1));
         IERC20(poolToken).safeApprove(unirouter, uint256(-1));
@@ -241,7 +243,7 @@ contract StrategyPoolTogether is BaseStrategyInitializable {
             uint256 _tokensToGov =
                 _tokensAvailable.mul(percentKeep).div(_denominator);
             if (_tokensToGov > 0) {
-                IERC20(poolToken).safeTransfer(governance(), _tokensToGov);
+                IERC20(poolToken).safeTransfer(treasury, _tokensToGov);
             }
             uint256 _tokensRemain = IERC20(poolToken).balanceOf(address(this));
             _swap(_tokensRemain, address(poolToken));
@@ -265,13 +267,15 @@ contract StrategyPoolTogether is BaseStrategyInitializable {
             return;
         }
 
+        uint256 _balanceOfWant = balanceOfWant();
+
         // do not invest if we have more debt than want
-        if (_debtOutstanding > balanceOfWant()) {
+        if (_debtOutstanding > _balanceOfWant) {
             return;
         }
 
         // Invest the rest of the want
-        uint256 _wantAvailable = balanceOfWant().sub(_debtOutstanding);
+        uint256 _wantAvailable = _balanceOfWant.sub(_debtOutstanding);
         if (_wantAvailable > 0) {
             IPoolTogether(wantPool).depositTo(
                 address(this),
@@ -288,18 +292,20 @@ contract StrategyPoolTogether is BaseStrategyInitializable {
         override
         returns (uint256 _liquidatedAmount, uint256 _loss)
     {
-        if (balanceOfWant() < _amountNeeded) {
+
+        uint256 _balanceOfWant = balanceOfWant();
+        if (_balanceOfWant < _amountNeeded) {
             // We need to withdraw to get back more want
-            _withdrawSome(_amountNeeded.sub(balanceOfWant()));
+            _withdrawSome(_amountNeeded.sub(_balanceOfWant));
+            // reload balance of want after side effect
+            _balanceOfWant = balanceOfWant();
         }
 
-        uint256 balanceOfWant = balanceOfWant();
-
-        if (balanceOfWant >= _amountNeeded) {
+        if (_balanceOfWant >= _amountNeeded) {
             _liquidatedAmount = _amountNeeded;
         } else {
-            _liquidatedAmount = balanceOfWant;
-            _loss = _amountNeeded.sub(balanceOfWant);
+            _liquidatedAmount = _balanceOfWant;
+            _loss = _amountNeeded.sub(_balanceOfWant);
         }
     }
 
@@ -371,5 +377,9 @@ contract StrategyPoolTogether is BaseStrategyInitializable {
 
     function setKeep(uint256 _percentKeep) external onlyGovernance {
         percentKeep = _percentKeep;
+    }
+
+    function setTreasury(address _treasury) external onlyGovernance {
+        treasury = _treasury;
     }
 }

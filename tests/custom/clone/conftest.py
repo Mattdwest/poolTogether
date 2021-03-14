@@ -2,6 +2,11 @@ import pytest
 from brownie import config, Contract
 
 
+# Snapshots the chain before each test and reverts after test completion.
+@pytest.fixture(scope="function", autouse=True)
+def shared_setup(fn_isolation):
+    pass
+
 @pytest.fixture
 def gov(accounts):
     yield accounts[0]
@@ -95,7 +100,7 @@ def comp_strategy(
     guardian,
     keeper,
     comp_vault,
-    StrategyDAIPoolTogether,
+    StrategyPoolTogether,
     gov,
     comp_want_pool,
     pool_token,
@@ -105,7 +110,7 @@ def comp_strategy(
     comp_ticket,
 ):
     strategy = guardian.deploy(
-        StrategyDAIPoolTogether,
+        StrategyPoolTogether,
         comp_vault,
         comp_want_pool,
         pool_token,
