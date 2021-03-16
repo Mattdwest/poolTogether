@@ -66,7 +66,10 @@ def unitoken():
 @pytest.fixture
 def vault(pm, gov, rewards, guardian, management, unitoken):
     Vault = pm(config["dependencies"][0]).Vault
-    Vault.at("0x986b4AFF588a109c09B50A03f42E4110E29D353F")
+    vault = guardian.deploy(Vault)
+    vault.initialize(unitoken, gov, rewards, "", "", guardian)
+    vault.setDepositLimit(2 ** 256 - 1, {"from": gov})
+    vault.setManagement(management, {"from": gov})
     yield vault
 
 @pytest.fixture
@@ -107,10 +110,9 @@ def uni():  # unirouter contract
 def liveStrategy(): #currently deployed strategy
     yield Contract("0x4b585E815FfA417C3a66a49e119F6aDC3C1A8d46")
 
-#@pytest.fixture
-#def liveVault(): #currently deployed vault
-#    Vault.at("0x986b4AFF588a109c09B50A03f42E4110E29D353F")
-#    yield liveVault
+@pytest.fixture
+def liveVault(): #currently deployed vault
+    yield Contract("0x2F194Da57aa855CAa02Ea3Ab991fa5d38178B9e6")
 
 @pytest.fixture
 def want_pool():
@@ -142,9 +144,9 @@ def newstrategy(
     strategist,
     guardian,
     keeper,
-    vault,
+    liveVault,
     StrategyPoolTogether,
-    gov,
+    strat_ms,
     want_pool,
     pool_token,
     uni,
@@ -152,9 +154,9 @@ def newstrategy(
     faucet,
     ticket,
 ):
-    strategy = guardian.deploy(
+    newstrategy = guardian.deploy(
         StrategyPoolTogether,
-        vault,
+        liveVault,
         want_pool,
         pool_token,
         uni,
@@ -162,7 +164,7 @@ def newstrategy(
         faucet,
         ticket,
     )
-    strategy.setKeeper(keeper)
+    newstrategy.setKeeper(keeper)
     yield newstrategy
 
 
@@ -174,3 +176,7 @@ def ticket_liquidity(accounts):
 @pytest.fixture
 def bonus_liquidity(accounts):
     yield accounts.at("0x7587cAefc8096f5F40ACB83A09Df031a018C66ec", force=True)
+
+@pytest.fixture
+def strat_ms(accounts):
+    yield accounts.at("0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7", force=True)

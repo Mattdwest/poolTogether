@@ -13,7 +13,7 @@ from brownie import StrategyPoolTogether
 @pytest.mark.require_network("mainnet-fork")
 def test_operation(
     chain,
-    vault,
+    liveVault,
     liveStrategy,
     ticket,
     unitoken,
@@ -26,6 +26,7 @@ def test_operation(
     bob,
     tinytim,
     newstrategy,
+    strat_ms,
 ):
 
     unitoken.approve(uni_liquidity, Wei("1000000 ether"), {"from": uni_liquidity})
@@ -36,12 +37,12 @@ def test_operation(
     unitoken.transferFrom(gov, bob, Wei("1000 ether"), {"from": gov})
     unitoken.transferFrom(gov, alice, Wei("4000 ether"), {"from": gov})
     unitoken.transferFrom(gov, tinytim, Wei("10 ether"), {"from": gov})
-    unitoken.approve(vault, Wei("1000000 ether"), {"from": bob})
-    unitoken.approve(vault, Wei("1000000 ether"), {"from": alice})
-    unitoken.approve(vault, Wei("1000000 ether"), {"from": tinytim})
+    #unitoken.approve(vault, Wei("1000000 ether"), {"from": bob})
+    #unitoken.approve(vault, Wei("1000000 ether"), {"from": alice})
+    #unitoken.approve(vault, Wei("1000000 ether"), {"from": tinytim})
 
     newstrategy.setStrategist(strategist)
-    vault.migrateStrategy(liveStrategy, newstrategy, {"from": gov})
+    liveVault.migrateStrategy(liveStrategy, newstrategy, {"from": strat_ms})
 
     assert ticket.balanceOf(liveStrategy) == 0
     assert ticket.balanceOf(newstrategy) > 0
