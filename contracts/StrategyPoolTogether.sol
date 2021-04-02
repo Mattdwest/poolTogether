@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import {
     BaseStrategyInitializable
-} from "@yearnvaults/contracts/BaseStrategy.sol";
+} from "../../contracts/BaseStrategyEdited.sol";
 
 import "../../interfaces/poolTogether/IPoolTogether.sol";
 import "../../interfaces/poolTogether/IPoolFaucet.sol";
