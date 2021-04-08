@@ -52,21 +52,21 @@ def tinytim(accounts):
 
 
 @pytest.fixture
-def usdc_liquidity(accounts):
+def dai_liquidity(accounts):
     yield accounts.at("0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7", force=True)
 
 
 @pytest.fixture
-def usdc():
-    token_address = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
+def dai():
+    token_address = "0x6b175474e89094c44da98b954eedeac495271d0f"
     yield Contract(token_address)
 
 
 @pytest.fixture
-def vault(pm, gov, rewards, guardian, management, usdc):
+def vault(pm, gov, rewards, guardian, management, dai):
     Vault = pm(config["dependencies"][0]).Vault
     vault = guardian.deploy(Vault)
-    vault.initialize(usdc, gov, rewards, "", "", guardian)
+    vault.initialize(dai, gov, rewards, "", "", guardian)
     vault.setDepositLimit(2 ** 256 - 1, {"from": gov})
     vault.setManagement(management, {"from": gov})
     yield vault
@@ -87,7 +87,6 @@ def strategy(
     faucet,
     ticket,
 ):
-
     strategy = guardian.deploy(
         StrategyPoolTogether,
         liveVault,
@@ -109,7 +108,7 @@ def uni():
 
 @pytest.fixture
 def want_pool():
-    yield Contract("0xde9ec95d7708B8319CCca4b8BC92c0a3B70bf416")
+    yield Contract("0xEBfb47A7ad0FD6e57323C8A42B2E5A6a4F68fc1a")
 
 
 @pytest.fixture
@@ -124,17 +123,46 @@ def bonus():
 
 @pytest.fixture
 def faucet():
-    yield Contract("0xBD537257fAd96e977b9E545bE583bbF7028F30b9")
+    yield Contract("0xF362ce295F2A4eaE4348fFC8cDBCe8d729ccb8Eb")
 
 
 @pytest.fixture
 def ticket():
-    yield Contract("0xd81b1a8b1ad00baa2d6609e0bae28a38713872f7")
+    yield Contract("0x334cbb5858417aee161b53ee0d5349ccf54514cf")
+
+
+@pytest.fixture
+def newstrategy(
+    strategist,
+    guardian,
+    keeper,
+    liveVault,
+    StrategyPoolTogether,
+    gov,
+    want_pool,
+    pool_token,
+    uni,
+    bonus,
+    faucet,
+    ticket,
+):
+    newstrategy = guardian.deploy(
+        StrategyPoolTogether,
+        liveVault,
+        want_pool,
+        pool_token,
+        uni,
+        bonus,
+        faucet,
+        ticket,
+    )
+    newstrategy.setKeeper(keeper)
+    yield newstrategy
 
 
 @pytest.fixture
 def ticket_liquidity(accounts):
-    yield accounts.at("0x80845058350B8c3Df5c3015d8a717D64B3bF9267", force=True)
+    yield accounts.at("0x926e78b8DF67e129011750Dd7b975f8E50D3d7Ad", force=True)
 
 
 @pytest.fixture
@@ -143,12 +171,17 @@ def bonus_liquidity(accounts):
 
 @pytest.fixture
 def liveVault():
-    yield Contract("0x5f18C75AbDAe578b483E5F43f12a39cF75b973a9")
+    yield Contract("0x19D3364A399d251E894aC732651be8B0E4e85001")
 
 @pytest.fixture
 def liveStrategy():
-    yield Contract("0x4D7d4485fD600c61d840ccbeC328BfD76A050F87")
+    yield Contract("0x32b8C26d0439e1959CEa6262CBabC12320b384c4")
 
 @pytest.fixture
 def liveGov():
     yield Contract("0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52")
+
+
+@pytest.fixture
+def treasury(accounts):
+    yield accounts.at("0x93A62dA5a14C80f265DAbC077fCEE437B1a0Efde", force=True)

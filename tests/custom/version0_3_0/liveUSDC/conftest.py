@@ -6,7 +6,6 @@ from brownie import config, Contract
 def shared_setup(fn_isolation):
     pass
 
-
 @pytest.fixture
 def gov(accounts):
     yield accounts[0]
@@ -53,31 +52,32 @@ def tinytim(accounts):
 
 
 @pytest.fixture
-def uni_liquidity(accounts):
-    yield accounts.at("0xbe0eb53f46cd790cd13851d5eff43d12404d33e8", force=True)
+def usdc_liquidity(accounts):
+    yield accounts.at("0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7", force=True)
 
 
 @pytest.fixture
-def unitoken():
-    token_address = "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"
+def usdc():
+    token_address = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
     yield Contract(token_address)
 
 
 @pytest.fixture
-def vault(pm, gov, rewards, guardian, management, unitoken):
+def vault(pm, gov, rewards, guardian, management, usdc):
     Vault = pm(config["dependencies"][0]).Vault
     vault = guardian.deploy(Vault)
-    vault.initialize(unitoken, gov, rewards, "", "", guardian)
+    vault.initialize(usdc, gov, rewards, "", "", guardian)
     vault.setDepositLimit(2 ** 256 - 1, {"from": gov})
     vault.setManagement(management, {"from": gov})
     yield vault
+
 
 @pytest.fixture
 def strategy(
     strategist,
     guardian,
     keeper,
-    vault,
+    liveVault,
     StrategyPoolTogether,
     gov,
     want_pool,
@@ -87,9 +87,10 @@ def strategy(
     faucet,
     ticket,
 ):
+
     strategy = guardian.deploy(
         StrategyPoolTogether,
-        vault,
+        liveVault,
         want_pool,
         pool_token,
         uni,
@@ -98,25 +99,17 @@ def strategy(
         ticket,
     )
     strategy.setKeeper(keeper)
-    vault.addStrategy(strategy, 10_000, 0, 2 ** 256 - 1, 1_000, {"from": gov})
     yield strategy
 
 
 @pytest.fixture
-def uni():  # unirouter contract
+def uni():
     yield Contract("0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D")
 
-@pytest.fixture
-def liveStrategy(): #currently deployed strategy
-    yield Contract("0x4b585E815FfA417C3a66a49e119F6aDC3C1A8d46")
-
-@pytest.fixture
-def liveVault(): #currently deployed vault
-    yield Contract("0x2F194Da57aa855CAa02Ea3Ab991fa5d38178B9e6")
 
 @pytest.fixture
 def want_pool():
-    yield Contract("0x0650d780292142835F6ac58dd8E2a336e87b4393")
+    yield Contract("0xde9ec95d7708B8319CCca4b8BC92c0a3B70bf416")
 
 
 @pytest.fixture
@@ -131,13 +124,34 @@ def bonus():
 
 @pytest.fixture
 def faucet():
-    yield Contract("0xa5dddefD30e234Be2Ac6FC1a0364cFD337aa0f61")
+    yield Contract("0xBD537257fAd96e977b9E545bE583bbF7028F30b9")
 
 
 @pytest.fixture
 def ticket():
-    yield Contract("0xa92a861fc11b99b24296af880011b47f9cafb5ab")
+    yield Contract("0xd81b1a8b1ad00baa2d6609e0bae28a38713872f7")
 
+
+@pytest.fixture
+def ticket_liquidity(accounts):
+    yield accounts.at("0x80845058350B8c3Df5c3015d8a717D64B3bF9267", force=True)
+
+
+@pytest.fixture
+def bonus_liquidity(accounts):
+    yield accounts.at("0x7587cAefc8096f5F40ACB83A09Df031a018C66ec", force=True)
+
+@pytest.fixture
+def liveVault():
+    yield Contract("0x5f18C75AbDAe578b483E5F43f12a39cF75b973a9")
+
+@pytest.fixture
+def liveStrategy():
+    yield Contract("0x4D7d4485fD600c61d840ccbeC328BfD76A050F87")
+
+@pytest.fixture
+def liveGov():
+    yield Contract("0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52")
 
 @pytest.fixture
 def newstrategy(
@@ -146,7 +160,7 @@ def newstrategy(
     keeper,
     liveVault,
     StrategyPoolTogether,
-    strat_ms,
+    gov,
     want_pool,
     pool_token,
     uni,
@@ -154,7 +168,8 @@ def newstrategy(
     faucet,
     ticket,
 ):
-    newstrategy = guardian.deploy(
+
+    strategy = guardian.deploy(
         StrategyPoolTogether,
         liveVault,
         want_pool,
@@ -164,19 +179,5 @@ def newstrategy(
         faucet,
         ticket,
     )
-    newstrategy.setKeeper(keeper)
-    yield newstrategy
-
-
-@pytest.fixture
-def ticket_liquidity(accounts):
-    yield accounts.at("0x330e75e1f48b1ee968197cc870511665a4a5a832", force=True)
-
-
-@pytest.fixture
-def bonus_liquidity(accounts):
-    yield accounts.at("0x7587cAefc8096f5F40ACB83A09Df031a018C66ec", force=True)
-
-@pytest.fixture
-def strat_ms(accounts):
-    yield accounts.at("0x16388463d60FFE0661Cf7F1f31a7D658aC790ff7", force=True)
+    strategy.setKeeper(keeper)
+    yield strategy
