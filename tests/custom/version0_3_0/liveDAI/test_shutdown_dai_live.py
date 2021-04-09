@@ -70,7 +70,7 @@ def test_operation(
 
     assert ticket.balanceOf(strategy) > 0
     dai_vault_before = dai.balanceOf(liveVault)
-    chain.sleep(3600 * 24 * 14)
+    chain.sleep(3600 * 6)
     chain.mine(1)
 
     # 6 hours for pricepershare to go up, there should be profit

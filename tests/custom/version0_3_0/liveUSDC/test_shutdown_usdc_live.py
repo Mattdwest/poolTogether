@@ -64,8 +64,6 @@ def test_operation(
     liveVault.deposit(40000_000_000, {"from": alice})
     liveVault.deposit(10_000_000, {"from": tinytim})
 
-    assert 1 == 2
-
     chain.mine(1)
     strategy.harvest({"from": liveGov})
 
@@ -85,20 +83,20 @@ def test_operation(
     strategy.harvest({"from": liveGov})
     chain.mine(1)
 
-    assert usdc.balanceOf(vault) > 0
+    assert usdc.balanceOf(liveVault) > 0
 
-    c = vault.balanceOf(alice)
+    c = liveVault.balanceOf(alice)
 
-    vault.withdraw(c, alice, 75, {"from": alice})
+    liveVault.withdraw(c, alice, 75, {"from": alice})
 
     assert usdc.balanceOf(alice) > 0
 
-    d = vault.balanceOf(bob)
-    vault.withdraw(d, bob, 75, {"from": bob})
+    d = liveVault.balanceOf(bob)
+    liveVault.withdraw(d, bob, 75, {"from": bob})
 
     assert usdc.balanceOf(bob) > 0
 
-    e = vault.balanceOf(tinytim)
-    vault.withdraw(e, tinytim, 75, {"from": tinytim})
+    e = liveVault.balanceOf(tinytim)
+    liveVault.withdraw(e, tinytim, 75, {"from": tinytim})
 
     assert usdc.balanceOf(tinytim) > 0
