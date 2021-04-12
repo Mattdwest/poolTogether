@@ -313,11 +313,17 @@ contract StrategyPoolTogether is BaseStrategyInitializable {
     function _withdrawSome(uint256 _amount) internal returns (uint256) {
         uint256 balanceOfWantBefore = balanceOfWant();
 
+        uint256 _fee = IPoolTogether(wantPool).calculateEarlyExitFee(
+            address(this),
+            ticket,
+            _amount
+        );
+
         IPoolTogether(wantPool).withdrawInstantlyFrom(
             address(this),
             _amount,
             ticket,
-            1e20
+            _fee.add(1)
         );
 
         return balanceOfWant().sub(balanceOfWantBefore);

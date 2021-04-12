@@ -15,4 +15,10 @@ interface IPoolTogether {
         address,
         uint256
     ) external;
+
+    function calculateEarlyExitFee(
+        address,
+        address,
+        uint256
+    ) external returns(uint256);
 }

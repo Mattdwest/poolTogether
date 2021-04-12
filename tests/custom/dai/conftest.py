@@ -163,7 +163,7 @@ def newstrategy(
 
 @pytest.fixture
 def ticket_liquidity(accounts):
-    yield accounts.at("0x227c6494c04bbab7ccb1b81f123b7f016db4e362", force=True)
+    yield accounts.at("0x57e848A6915455a7e77CF0D55A1474bEFd9C374d", force=True)
 
 
 @pytest.fixture
